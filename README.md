@@ -1,27 +1,8 @@
-> A Connector template for new C8 outbound connector
->
-> To use this template update the following resources to match the name of your connector:
->
-> * [README](./README.md) (title, description)
-> * [Element Template](./element-templates/template-connector.json)
-> * [POM](./pom.xml) (artifact name, id, description)
-> * [Connector Function](src/main/java/io/camunda/example/MyConnectorFunction.java) (rename, implement, update `OutboundConnector` annotation)
-> * [Service Provider Interface (SPI)](./src/main/resources/META-INF/services/io.camunda.connector.api.outbound.OutboundConnectorFunction) (rename)
->
-> ...and delete this hint.
-> 
-> Read more about [creating Connectors](https://docs.camunda.io/docs/components/connectors/custom-built-connectors/connector-sdk/#creating-a-custom-connector)
->
-> Check out the [Connectors SDK](https://github.com/camunda/connector-sdk)
+# Camunda 8 Marvel API Connector
 
-
-# Connector Template
-
-Camunda Outbound Connector Template
-
-Emulates a simple outbound connector function that takes a message and echoes it back.
-
-The function will throw an exception if your message starts with `fail`. This can be used to test error handling.
+[Marvel's API](https://developer.marvel.com/) requires a somewhat unique authentication method that is not currently supported by the
+REST protocol Connector. Therefore, a custom Connector was required. I present you to you a Connector
+to fetch any and all data from Marvel's extensive comic API!
 
 ## Build
 
