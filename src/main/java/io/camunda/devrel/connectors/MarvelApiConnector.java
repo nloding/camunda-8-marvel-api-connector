@@ -1,45 +1,49 @@
-package io.camunda.example;
+package io.camunda.devrel.connectors;
 
 import io.camunda.connector.api.annotation.OutboundConnector;
 import io.camunda.connector.api.error.ConnectorException;
 import io.camunda.connector.api.outbound.OutboundConnectorContext;
 import io.camunda.connector.api.outbound.OutboundConnectorFunction;
 import io.camunda.connector.generator.java.annotation.ElementTemplate;
-import io.camunda.example.dto.MyConnectorRequest;
-import io.camunda.example.dto.MyConnectorResult;
+import io.camunda.devrel.connectors.Model.Query;
+import io.camunda.devrel.connectors.dto.MyConnectorRequest;
+import io.camunda.devrel.connectors.dto.MyConnectorResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @OutboundConnector(
-    name = "MYCONNECTOR",
+    name = "Marvel API Connector",
     inputVariables = {"authentication", "message"},
     type = "io.camunda:template:1")
 @ElementTemplate(
-    id = "io.camunda.connector.Template.v1",
-    name = "Template connector",
+    id = "io.camunda.devrel.connectors.MarvelApi.v1",
+    name = "Marvel API Connector",
     version = 1,
-    description = "Describe this connector",
+    description = "Fetches data from the Marvel API",
     icon = "icon.svg",
-    documentationRef = "https://docs.camunda.io/docs/components/connectors/out-of-the-box-connectors/available-connectors-overview/",
+    documentationRef = "https://github.com/nloding/camunda-8-marvel-api-connector/README.md",
     propertyGroups = {
-      @ElementTemplate.PropertyGroup(id = "authentication", label = "Authentication"),
-      @ElementTemplate.PropertyGroup(id = "compose", label = "Compose")
+//      @ElementTemplate.PropertyGroup(id = "authentication", label = "Authentication"),
+      @ElementTemplate.PropertyGroup(id = "query", label = "Type of Query"),
+      @ElementTemplate.PropertyGroup(id = "operation", label = "Operation"),
+      @ElementTemplate.PropertyGroup(id = "orderBy", label = "Order By"),
+      @ElementTemplate.PropertyGroup(id = "pagination", label = "Pagination")
     },
-    inputDataClass = MyConnectorRequest.class)
-public class MyConnectorFunction implements OutboundConnectorFunction {
+    inputDataClass = Query.class)
+public class MarvelApiConnector implements OutboundConnectorFunction {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(MyConnectorFunction.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(MarvelApiConnector.class);
 
   @Override
   public Object execute(OutboundConnectorContext context) {
-    final var connectorRequest = context.bindVariables(MyConnectorRequest.class);
+    final var connectorRequest = context.bindVariables(Query.class);
     return executeConnector(connectorRequest);
   }
 
-  private MyConnectorResult executeConnector(final MyConnectorRequest connectorRequest) {
+  private MyConnectorResult executeConnector(final Query connectorRequest) {
     // TODO: implement connector logic
     LOGGER.info("Executing my connector with request {}", connectorRequest);
-    String message = connectorRequest.message();
+    String message = "fail";
     if (message != null && message.toLowerCase().startsWith("fail")) {
       throw new ConnectorException("FAIL", "My property started with 'fail', was: " + message);
     }

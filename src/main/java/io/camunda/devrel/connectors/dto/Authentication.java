@@ -1,4 +1,4 @@
-package io.camunda.example.dto;
+package io.camunda.devrel.connectors.dto;
 
 import io.camunda.connector.generator.java.annotation.TemplateProperty;
 import jakarta.validation.constraints.NotEmpty;
