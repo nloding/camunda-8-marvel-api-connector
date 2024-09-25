@@ -1,0 +1,2679 @@
+{
+  "$schema" : "https://unpkg.com/@camunda/zeebe-element-templates-json-schema/resources/schema.json",
+  "name" : "Marvel API Connector",
+  "id" : "io.camunda.devrel.connectors.MarvelApi.v1",
+  "description" : "Fetches data from the Marvel API",
+  "documentationRef" : "https://github.com/nloding/camunda-8-marvel-api-connector/README.md",
+  "version" : 1,
+  "category" : {
+    "id" : "connectors",
+    "name" : "Connectors"
+  },
+  "appliesTo" : [ "bpmn:Task" ],
+  "elementType" : {
+    "value" : "bpmn:ServiceTask"
+  },
+  "groups" : [ {
+    "id" : "query",
+    "label" : "Type of Query"
+  }, {
+    "id" : "operation",
+    "label" : "Operation"
+  }, {
+    "id" : "pagination",
+    "label" : "Pagination"
+  }, {
+    "id" : "output",
+    "label" : "Output mapping"
+  }, {
+    "id" : "error",
+    "label" : "Error handling"
+  }, {
+    "id" : "retries",
+    "label" : "Retries"
+  } ],
+  "properties" : [ {
+    "value" : "io.camunda:template:1",
+    "binding" : {
+      "property" : "type",
+      "type" : "zeebe:taskDefinition"
+    },
+    "type" : "Hidden"
+  }, {
+    "id" : "query.type",
+    "label" : "Query",
+    "group" : "query",
+    "binding" : {
+      "name" : "query.type",
+      "type" : "zeebe:input"
+    },
+    "type" : "Dropdown",
+    "choices" : [ {
+      "name" : "Characters Query",
+      "value" : "charactersQuery"
+    }, {
+      "name" : "Comics Query",
+      "value" : "comicsQuery"
+    } ]
+  }, {
+    "id" : "Character Operation",
+    "label" : "Characters query",
+    "group" : "operation",
+    "binding" : {
+      "name" : "Character Operation",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "property" : "query.type",
+      "equals" : "charactersQuery",
+      "type" : "simple"
+    },
+    "type" : "Dropdown",
+    "choices" : [ {
+      "name" : "Get all Characters",
+      "value" : "charactersGetAll"
+    }, {
+      "name" : "Get Character by ID",
+      "value" : "charactersGetById"
+    }, {
+      "name" : "List of Comics containing Character",
+      "value" : "comicsGetByCharacterId"
+    }, {
+      "name" : "List of Events containing Character",
+      "value" : "eventsGetByCharacterId"
+    }, {
+      "name" : "List of Series containing Character",
+      "value" : "seriesGetByCharacterId"
+    }, {
+      "name" : "List of Stories containing Character",
+      "value" : "storiesGetByCharacterId"
+    } ]
+  }, {
+    "id" : "charactersGetById_characterId.characterId",
+    "label" : "Character ID",
+    "description" : "A single character ID.",
+    "optional" : false,
+    "constraints" : {
+      "notEmpty" : true
+    },
+    "feel" : "optional",
+    "group" : "operation",
+    "binding" : {
+      "name" : "charactersGetById_characterId.operation.characterId",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "charactersGetById",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "String"
+  }, {
+    "id" : "comicsGetByCharacterId_characterId.characterId",
+    "label" : "Character ID",
+    "description" : "A single character ID.",
+    "optional" : false,
+    "constraints" : {
+      "notEmpty" : true
+    },
+    "feel" : "optional",
+    "group" : "operation",
+    "binding" : {
+      "name" : "comicsGetByCharacterId_characterId.operation.characterId",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "comicsGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "String"
+  }, {
+    "id" : "comicsGetByCharacterId_comicsFilters.format",
+    "label" : "Format",
+    "description" : "Filter by the issue format.",
+    "optional" : false,
+    "group" : "operation",
+    "binding" : {
+      "name" : "comicsGetByCharacterId_comicsFilters.operation.format",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "comicsGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "Dropdown",
+    "choices" : [ {
+      "name" : "Digital comic",
+      "value" : "digital comic"
+    }, {
+      "name" : "Infinite comic",
+      "value" : "infinite comic"
+    }, {
+      "name" : "Digest",
+      "value" : "digest"
+    }, {
+      "name" : "Trade paperback",
+      "value" : "trade paperback"
+    }, {
+      "name" : "Magazine",
+      "value" : "magazine"
+    }, {
+      "name" : "Comic",
+      "value" : "comic"
+    }, {
+      "name" : "Hardcover",
+      "value" : "hardcover"
+    }, {
+      "name" : "Graphic novel",
+      "value" : "graphic novel"
+    } ]
+  }, {
+    "id" : "comicsGetByCharacterId_comicsFilters.formatType",
+    "label" : "Format Type",
+    "description" : "Filter by the issue format type.",
+    "optional" : false,
+    "group" : "operation",
+    "binding" : {
+      "name" : "comicsGetByCharacterId_comicsFilters.operation.formatType",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "comicsGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "Dropdown",
+    "choices" : [ {
+      "name" : "Collection",
+      "value" : "collection"
+    }, {
+      "name" : "Comic",
+      "value" : "comic"
+    } ]
+  }, {
+    "id" : "comicsGetByCharacterId_comicsFilters.noVariants",
+    "label" : "Exclude Variants?",
+    "description" : "Exclude variant comics from the result set.",
+    "optional" : false,
+    "group" : "operation",
+    "binding" : {
+      "name" : "comicsGetByCharacterId_comicsFilters.operation.noVariants",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "comicsGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "Boolean"
+  }, {
+    "id" : "comicsGetByCharacterId_comicsFilters.dateDescriptor",
+    "label" : "Predefined Date Range",
+    "description" : "Return comics within a predefined date range.",
+    "optional" : false,
+    "group" : "operation",
+    "binding" : {
+      "name" : "comicsGetByCharacterId_comicsFilters.operation.dateDescriptor",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "comicsGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "Dropdown",
+    "choices" : [ {
+      "name" : "Next week",
+      "value" : "nextWeek"
+    }, {
+      "name" : "Next month",
+      "value" : "nextMonth"
+    }, {
+      "name" : "This week",
+      "value" : "thisWeek"
+    }, {
+      "name" : "Last week",
+      "value" : "lastWeek"
+    } ]
+  }, {
+    "id" : "comicsGetByCharacterId_comicsFilters.dateRange",
+    "label" : "Date Range",
+    "description" : "Return comics within a predefined date range. Dates must be specified as date1,date2 (e.g. 2013-01-01,2013-01-02).",
+    "optional" : false,
+    "feel" : "optional",
+    "group" : "operation",
+    "binding" : {
+      "name" : "comicsGetByCharacterId_comicsFilters.operation.dateRange",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "comicsGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "String"
+  }, {
+    "id" : "comicsGetByCharacterId_comicsFilters.title",
+    "label" : "Title",
+    "description" : "Return only issues in series whose title matches the input.",
+    "optional" : false,
+    "feel" : "optional",
+    "group" : "operation",
+    "binding" : {
+      "name" : "comicsGetByCharacterId_comicsFilters.operation.title",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "comicsGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "String"
+  }, {
+    "id" : "comicsGetByCharacterId_comicsFilters.titleStartsWith",
+    "label" : "Title Starts With",
+    "description" : "Return only issues in series whose title starts with the input.",
+    "optional" : false,
+    "feel" : "optional",
+    "group" : "operation",
+    "binding" : {
+      "name" : "comicsGetByCharacterId_comicsFilters.operation.titleStartsWith",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "comicsGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "String"
+  }, {
+    "id" : "comicsGetByCharacterId_comicsFilters.startYear",
+    "label" : "Start Year",
+    "description" : "Return only issues in series whose start year matches the input.",
+    "optional" : false,
+    "feel" : "optional",
+    "group" : "operation",
+    "binding" : {
+      "name" : "comicsGetByCharacterId_comicsFilters.operation.startYear",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "comicsGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "String"
+  }, {
+    "id" : "comicsGetByCharacterId_comicsFilters.issueNumber",
+    "label" : "Issue Number",
+    "description" : "Return only issues in series whose issue number matches the input.",
+    "optional" : false,
+    "feel" : "optional",
+    "group" : "operation",
+    "binding" : {
+      "name" : "comicsGetByCharacterId_comicsFilters.operation.issueNumber",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "comicsGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "String"
+  }, {
+    "id" : "comicsGetByCharacterId_comicsFilters.diamondCode",
+    "label" : "Diamond Code",
+    "description" : "Filter by diamond code.",
+    "optional" : false,
+    "feel" : "optional",
+    "group" : "operation",
+    "binding" : {
+      "name" : "comicsGetByCharacterId_comicsFilters.operation.diamondCode",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "comicsGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "String"
+  }, {
+    "id" : "comicsGetByCharacterId_comicsFilters.digitalId",
+    "label" : "Digital ID",
+    "description" : "Filter by digital comic id.",
+    "optional" : false,
+    "feel" : "optional",
+    "group" : "operation",
+    "binding" : {
+      "name" : "comicsGetByCharacterId_comicsFilters.operation.digitalId",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "comicsGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "String"
+  }, {
+    "id" : "comicsGetByCharacterId_comicsFilters.upc",
+    "label" : "UPC",
+    "description" : "Filter by UPC.",
+    "optional" : false,
+    "feel" : "optional",
+    "group" : "operation",
+    "binding" : {
+      "name" : "comicsGetByCharacterId_comicsFilters.operation.upc",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "comicsGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "String"
+  }, {
+    "id" : "comicsGetByCharacterId_comicsFilters.isbn",
+    "label" : "ISBN",
+    "description" : "Filter by ISBN.",
+    "optional" : false,
+    "feel" : "optional",
+    "group" : "operation",
+    "binding" : {
+      "name" : "comicsGetByCharacterId_comicsFilters.operation.isbn",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "comicsGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "String"
+  }, {
+    "id" : "comicsGetByCharacterId_comicsFilters.ean",
+    "label" : "EAN",
+    "description" : "Filter by EAN.",
+    "optional" : false,
+    "feel" : "optional",
+    "group" : "operation",
+    "binding" : {
+      "name" : "comicsGetByCharacterId_comicsFilters.operation.ean",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "comicsGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "String"
+  }, {
+    "id" : "comicsGetByCharacterId_comicsFilters.issn",
+    "label" : "ISSN",
+    "description" : "Filter by ISSN.",
+    "optional" : false,
+    "feel" : "optional",
+    "group" : "operation",
+    "binding" : {
+      "name" : "comicsGetByCharacterId_comicsFilters.operation.issn",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "comicsGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "String"
+  }, {
+    "id" : "comicsGetByCharacterId_comicsFilters.hasDigitalIssue",
+    "label" : "Has Digital Issue?",
+    "description" : "Include only results which are available digitally.",
+    "optional" : false,
+    "group" : "operation",
+    "binding" : {
+      "name" : "comicsGetByCharacterId_comicsFilters.operation.hasDigitalIssue",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "comicsGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "Boolean"
+  }, {
+    "id" : "comicsGetByCharacterId_modifiedSince.modifiedSince",
+    "label" : "Modified Since",
+    "description" : "Return only records which have been modified since the specified date (YYYY-MM-DD).",
+    "optional" : false,
+    "feel" : "optional",
+    "group" : "operation",
+    "binding" : {
+      "name" : "comicsGetByCharacterId_modifiedSince.operation.modifiedSince",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "comicsGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "String"
+  }, {
+    "id" : "comicsGetByCharacterId_creators.creators",
+    "label" : "Creators",
+    "description" : "Return only records which feature work by the specified creators (accepts a comma-separated list of ids).",
+    "optional" : false,
+    "feel" : "optional",
+    "group" : "operation",
+    "binding" : {
+      "name" : "comicsGetByCharacterId_creators.operation.creators",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "comicsGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "String"
+  }, {
+    "id" : "comicsGetByCharacterId_events.events",
+    "label" : "Events",
+    "description" : "Return only records which take place in the specified events (accepts a comma-separated list of ids).",
+    "optional" : false,
+    "feel" : "optional",
+    "group" : "operation",
+    "binding" : {
+      "name" : "comicsGetByCharacterId_events.operation.events",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "comicsGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "String"
+  }, {
+    "id" : "comicsGetByCharacterId_series.series",
+    "label" : "Series",
+    "description" : "Return only records which are part of the specified series (accepts a comma-separated list of ids).",
+    "optional" : false,
+    "feel" : "optional",
+    "group" : "operation",
+    "binding" : {
+      "name" : "comicsGetByCharacterId_series.operation.series",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "comicsGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "String"
+  }, {
+    "id" : "comicsGetByCharacterId_stories.stories",
+    "label" : "Stories",
+    "description" : "Return only records which contain the specified stories (accepts a comma-separated list of ids).",
+    "optional" : false,
+    "feel" : "optional",
+    "group" : "operation",
+    "binding" : {
+      "name" : "comicsGetByCharacterId_stories.operation.stories",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "comicsGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "String"
+  }, {
+    "id" : "eventsGetByCharacterId_characterId.characterId",
+    "label" : "Character ID",
+    "description" : "A single character ID.",
+    "optional" : false,
+    "constraints" : {
+      "notEmpty" : true
+    },
+    "feel" : "optional",
+    "group" : "operation",
+    "binding" : {
+      "name" : "eventsGetByCharacterId_characterId.operation.characterId",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "eventsGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "String"
+  }, {
+    "id" : "eventsGetByCharacterId_comicsFilters.format",
+    "label" : "Format",
+    "description" : "Filter by the issue format.",
+    "optional" : false,
+    "group" : "operation",
+    "binding" : {
+      "name" : "eventsGetByCharacterId_comicsFilters.operation.format",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "eventsGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "Dropdown",
+    "choices" : [ {
+      "name" : "Digital comic",
+      "value" : "digital comic"
+    }, {
+      "name" : "Infinite comic",
+      "value" : "infinite comic"
+    }, {
+      "name" : "Digest",
+      "value" : "digest"
+    }, {
+      "name" : "Trade paperback",
+      "value" : "trade paperback"
+    }, {
+      "name" : "Magazine",
+      "value" : "magazine"
+    }, {
+      "name" : "Comic",
+      "value" : "comic"
+    }, {
+      "name" : "Hardcover",
+      "value" : "hardcover"
+    }, {
+      "name" : "Graphic novel",
+      "value" : "graphic novel"
+    } ]
+  }, {
+    "id" : "eventsGetByCharacterId_comicsFilters.formatType",
+    "label" : "Format Type",
+    "description" : "Filter by the issue format type.",
+    "optional" : false,
+    "group" : "operation",
+    "binding" : {
+      "name" : "eventsGetByCharacterId_comicsFilters.operation.formatType",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "eventsGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "Dropdown",
+    "choices" : [ {
+      "name" : "Collection",
+      "value" : "collection"
+    }, {
+      "name" : "Comic",
+      "value" : "comic"
+    } ]
+  }, {
+    "id" : "eventsGetByCharacterId_comicsFilters.noVariants",
+    "label" : "Exclude Variants?",
+    "description" : "Exclude variant comics from the result set.",
+    "optional" : false,
+    "group" : "operation",
+    "binding" : {
+      "name" : "eventsGetByCharacterId_comicsFilters.operation.noVariants",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "eventsGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "Boolean"
+  }, {
+    "id" : "eventsGetByCharacterId_comicsFilters.dateDescriptor",
+    "label" : "Predefined Date Range",
+    "description" : "Return comics within a predefined date range.",
+    "optional" : false,
+    "group" : "operation",
+    "binding" : {
+      "name" : "eventsGetByCharacterId_comicsFilters.operation.dateDescriptor",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "eventsGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "Dropdown",
+    "choices" : [ {
+      "name" : "Next week",
+      "value" : "nextWeek"
+    }, {
+      "name" : "Next month",
+      "value" : "nextMonth"
+    }, {
+      "name" : "This week",
+      "value" : "thisWeek"
+    }, {
+      "name" : "Last week",
+      "value" : "lastWeek"
+    } ]
+  }, {
+    "id" : "eventsGetByCharacterId_comicsFilters.dateRange",
+    "label" : "Date Range",
+    "description" : "Return comics within a predefined date range. Dates must be specified as date1,date2 (e.g. 2013-01-01,2013-01-02).",
+    "optional" : false,
+    "feel" : "optional",
+    "group" : "operation",
+    "binding" : {
+      "name" : "eventsGetByCharacterId_comicsFilters.operation.dateRange",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "eventsGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "String"
+  }, {
+    "id" : "eventsGetByCharacterId_comicsFilters.title",
+    "label" : "Title",
+    "description" : "Return only issues in series whose title matches the input.",
+    "optional" : false,
+    "feel" : "optional",
+    "group" : "operation",
+    "binding" : {
+      "name" : "eventsGetByCharacterId_comicsFilters.operation.title",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "eventsGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "String"
+  }, {
+    "id" : "eventsGetByCharacterId_comicsFilters.titleStartsWith",
+    "label" : "Title Starts With",
+    "description" : "Return only issues in series whose title starts with the input.",
+    "optional" : false,
+    "feel" : "optional",
+    "group" : "operation",
+    "binding" : {
+      "name" : "eventsGetByCharacterId_comicsFilters.operation.titleStartsWith",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "eventsGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "String"
+  }, {
+    "id" : "eventsGetByCharacterId_comicsFilters.startYear",
+    "label" : "Start Year",
+    "description" : "Return only issues in series whose start year matches the input.",
+    "optional" : false,
+    "feel" : "optional",
+    "group" : "operation",
+    "binding" : {
+      "name" : "eventsGetByCharacterId_comicsFilters.operation.startYear",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "eventsGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "String"
+  }, {
+    "id" : "eventsGetByCharacterId_comicsFilters.issueNumber",
+    "label" : "Issue Number",
+    "description" : "Return only issues in series whose issue number matches the input.",
+    "optional" : false,
+    "feel" : "optional",
+    "group" : "operation",
+    "binding" : {
+      "name" : "eventsGetByCharacterId_comicsFilters.operation.issueNumber",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "eventsGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "String"
+  }, {
+    "id" : "eventsGetByCharacterId_comicsFilters.diamondCode",
+    "label" : "Diamond Code",
+    "description" : "Filter by diamond code.",
+    "optional" : false,
+    "feel" : "optional",
+    "group" : "operation",
+    "binding" : {
+      "name" : "eventsGetByCharacterId_comicsFilters.operation.diamondCode",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "eventsGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "String"
+  }, {
+    "id" : "eventsGetByCharacterId_comicsFilters.digitalId",
+    "label" : "Digital ID",
+    "description" : "Filter by digital comic id.",
+    "optional" : false,
+    "feel" : "optional",
+    "group" : "operation",
+    "binding" : {
+      "name" : "eventsGetByCharacterId_comicsFilters.operation.digitalId",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "eventsGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "String"
+  }, {
+    "id" : "eventsGetByCharacterId_comicsFilters.upc",
+    "label" : "UPC",
+    "description" : "Filter by UPC.",
+    "optional" : false,
+    "feel" : "optional",
+    "group" : "operation",
+    "binding" : {
+      "name" : "eventsGetByCharacterId_comicsFilters.operation.upc",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "eventsGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "String"
+  }, {
+    "id" : "eventsGetByCharacterId_comicsFilters.isbn",
+    "label" : "ISBN",
+    "description" : "Filter by ISBN.",
+    "optional" : false,
+    "feel" : "optional",
+    "group" : "operation",
+    "binding" : {
+      "name" : "eventsGetByCharacterId_comicsFilters.operation.isbn",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "eventsGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "String"
+  }, {
+    "id" : "eventsGetByCharacterId_comicsFilters.ean",
+    "label" : "EAN",
+    "description" : "Filter by EAN.",
+    "optional" : false,
+    "feel" : "optional",
+    "group" : "operation",
+    "binding" : {
+      "name" : "eventsGetByCharacterId_comicsFilters.operation.ean",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "eventsGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "String"
+  }, {
+    "id" : "eventsGetByCharacterId_comicsFilters.issn",
+    "label" : "ISSN",
+    "description" : "Filter by ISSN.",
+    "optional" : false,
+    "feel" : "optional",
+    "group" : "operation",
+    "binding" : {
+      "name" : "eventsGetByCharacterId_comicsFilters.operation.issn",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "eventsGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "String"
+  }, {
+    "id" : "eventsGetByCharacterId_comicsFilters.hasDigitalIssue",
+    "label" : "Has Digital Issue?",
+    "description" : "Include only results which are available digitally.",
+    "optional" : false,
+    "group" : "operation",
+    "binding" : {
+      "name" : "eventsGetByCharacterId_comicsFilters.operation.hasDigitalIssue",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "eventsGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "Boolean"
+  }, {
+    "id" : "eventsGetByCharacterId_modifiedSince.modifiedSince",
+    "label" : "Modified Since",
+    "description" : "Return only records which have been modified since the specified date (YYYY-MM-DD).",
+    "optional" : false,
+    "feel" : "optional",
+    "group" : "operation",
+    "binding" : {
+      "name" : "eventsGetByCharacterId_modifiedSince.operation.modifiedSince",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "eventsGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "String"
+  }, {
+    "id" : "eventsGetByCharacterId_comics.comics",
+    "label" : "Comics",
+    "description" : "Return only records which take place in the specified comics (accepts a comma-separated list of ids).",
+    "optional" : false,
+    "feel" : "optional",
+    "group" : "operation",
+    "binding" : {
+      "name" : "eventsGetByCharacterId_comics.operation.comics",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "eventsGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "String"
+  }, {
+    "id" : "eventsGetByCharacterId_creators.creators",
+    "label" : "Creators",
+    "description" : "Return only records which feature work by the specified creators (accepts a comma-separated list of ids).",
+    "optional" : false,
+    "feel" : "optional",
+    "group" : "operation",
+    "binding" : {
+      "name" : "eventsGetByCharacterId_creators.operation.creators",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "eventsGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "String"
+  }, {
+    "id" : "eventsGetByCharacterId_series.series",
+    "label" : "Series",
+    "description" : "Return only records which are part of the specified series (accepts a comma-separated list of ids).",
+    "optional" : false,
+    "feel" : "optional",
+    "group" : "operation",
+    "binding" : {
+      "name" : "eventsGetByCharacterId_series.operation.series",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "eventsGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "String"
+  }, {
+    "id" : "eventsGetByCharacterId_stories.stories",
+    "label" : "Stories",
+    "description" : "Return only records which contain the specified stories (accepts a comma-separated list of ids).",
+    "optional" : false,
+    "feel" : "optional",
+    "group" : "operation",
+    "binding" : {
+      "name" : "eventsGetByCharacterId_stories.operation.stories",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "eventsGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "String"
+  }, {
+    "id" : "seriesGetByCharacterId_characterId.characterId",
+    "label" : "Character ID",
+    "description" : "A single character ID.",
+    "optional" : false,
+    "constraints" : {
+      "notEmpty" : true
+    },
+    "feel" : "optional",
+    "group" : "operation",
+    "binding" : {
+      "name" : "seriesGetByCharacterId_characterId.operation.characterId",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "seriesGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "String"
+  }, {
+    "id" : "seriesGetByCharacterId_comicsFilters.format",
+    "label" : "Format",
+    "description" : "Filter by the issue format.",
+    "optional" : false,
+    "group" : "operation",
+    "binding" : {
+      "name" : "seriesGetByCharacterId_comicsFilters.operation.format",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "seriesGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "Dropdown",
+    "choices" : [ {
+      "name" : "Digital comic",
+      "value" : "digital comic"
+    }, {
+      "name" : "Infinite comic",
+      "value" : "infinite comic"
+    }, {
+      "name" : "Digest",
+      "value" : "digest"
+    }, {
+      "name" : "Trade paperback",
+      "value" : "trade paperback"
+    }, {
+      "name" : "Magazine",
+      "value" : "magazine"
+    }, {
+      "name" : "Comic",
+      "value" : "comic"
+    }, {
+      "name" : "Hardcover",
+      "value" : "hardcover"
+    }, {
+      "name" : "Graphic novel",
+      "value" : "graphic novel"
+    } ]
+  }, {
+    "id" : "seriesGetByCharacterId_comicsFilters.formatType",
+    "label" : "Format Type",
+    "description" : "Filter by the issue format type.",
+    "optional" : false,
+    "group" : "operation",
+    "binding" : {
+      "name" : "seriesGetByCharacterId_comicsFilters.operation.formatType",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "seriesGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "Dropdown",
+    "choices" : [ {
+      "name" : "Collection",
+      "value" : "collection"
+    }, {
+      "name" : "Comic",
+      "value" : "comic"
+    } ]
+  }, {
+    "id" : "seriesGetByCharacterId_comicsFilters.noVariants",
+    "label" : "Exclude Variants?",
+    "description" : "Exclude variant comics from the result set.",
+    "optional" : false,
+    "group" : "operation",
+    "binding" : {
+      "name" : "seriesGetByCharacterId_comicsFilters.operation.noVariants",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "seriesGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "Boolean"
+  }, {
+    "id" : "seriesGetByCharacterId_comicsFilters.dateDescriptor",
+    "label" : "Predefined Date Range",
+    "description" : "Return comics within a predefined date range.",
+    "optional" : false,
+    "group" : "operation",
+    "binding" : {
+      "name" : "seriesGetByCharacterId_comicsFilters.operation.dateDescriptor",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "seriesGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "Dropdown",
+    "choices" : [ {
+      "name" : "Next week",
+      "value" : "nextWeek"
+    }, {
+      "name" : "Next month",
+      "value" : "nextMonth"
+    }, {
+      "name" : "This week",
+      "value" : "thisWeek"
+    }, {
+      "name" : "Last week",
+      "value" : "lastWeek"
+    } ]
+  }, {
+    "id" : "seriesGetByCharacterId_comicsFilters.dateRange",
+    "label" : "Date Range",
+    "description" : "Return comics within a predefined date range. Dates must be specified as date1,date2 (e.g. 2013-01-01,2013-01-02).",
+    "optional" : false,
+    "feel" : "optional",
+    "group" : "operation",
+    "binding" : {
+      "name" : "seriesGetByCharacterId_comicsFilters.operation.dateRange",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "seriesGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "String"
+  }, {
+    "id" : "seriesGetByCharacterId_comicsFilters.title",
+    "label" : "Title",
+    "description" : "Return only issues in series whose title matches the input.",
+    "optional" : false,
+    "feel" : "optional",
+    "group" : "operation",
+    "binding" : {
+      "name" : "seriesGetByCharacterId_comicsFilters.operation.title",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "seriesGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "String"
+  }, {
+    "id" : "seriesGetByCharacterId_comicsFilters.titleStartsWith",
+    "label" : "Title Starts With",
+    "description" : "Return only issues in series whose title starts with the input.",
+    "optional" : false,
+    "feel" : "optional",
+    "group" : "operation",
+    "binding" : {
+      "name" : "seriesGetByCharacterId_comicsFilters.operation.titleStartsWith",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "seriesGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "String"
+  }, {
+    "id" : "seriesGetByCharacterId_comicsFilters.startYear",
+    "label" : "Start Year",
+    "description" : "Return only issues in series whose start year matches the input.",
+    "optional" : false,
+    "feel" : "optional",
+    "group" : "operation",
+    "binding" : {
+      "name" : "seriesGetByCharacterId_comicsFilters.operation.startYear",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "seriesGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "String"
+  }, {
+    "id" : "seriesGetByCharacterId_comicsFilters.issueNumber",
+    "label" : "Issue Number",
+    "description" : "Return only issues in series whose issue number matches the input.",
+    "optional" : false,
+    "feel" : "optional",
+    "group" : "operation",
+    "binding" : {
+      "name" : "seriesGetByCharacterId_comicsFilters.operation.issueNumber",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "seriesGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "String"
+  }, {
+    "id" : "seriesGetByCharacterId_comicsFilters.diamondCode",
+    "label" : "Diamond Code",
+    "description" : "Filter by diamond code.",
+    "optional" : false,
+    "feel" : "optional",
+    "group" : "operation",
+    "binding" : {
+      "name" : "seriesGetByCharacterId_comicsFilters.operation.diamondCode",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "seriesGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "String"
+  }, {
+    "id" : "seriesGetByCharacterId_comicsFilters.digitalId",
+    "label" : "Digital ID",
+    "description" : "Filter by digital comic id.",
+    "optional" : false,
+    "feel" : "optional",
+    "group" : "operation",
+    "binding" : {
+      "name" : "seriesGetByCharacterId_comicsFilters.operation.digitalId",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "seriesGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "String"
+  }, {
+    "id" : "seriesGetByCharacterId_comicsFilters.upc",
+    "label" : "UPC",
+    "description" : "Filter by UPC.",
+    "optional" : false,
+    "feel" : "optional",
+    "group" : "operation",
+    "binding" : {
+      "name" : "seriesGetByCharacterId_comicsFilters.operation.upc",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "seriesGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "String"
+  }, {
+    "id" : "seriesGetByCharacterId_comicsFilters.isbn",
+    "label" : "ISBN",
+    "description" : "Filter by ISBN.",
+    "optional" : false,
+    "feel" : "optional",
+    "group" : "operation",
+    "binding" : {
+      "name" : "seriesGetByCharacterId_comicsFilters.operation.isbn",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "seriesGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "String"
+  }, {
+    "id" : "seriesGetByCharacterId_comicsFilters.ean",
+    "label" : "EAN",
+    "description" : "Filter by EAN.",
+    "optional" : false,
+    "feel" : "optional",
+    "group" : "operation",
+    "binding" : {
+      "name" : "seriesGetByCharacterId_comicsFilters.operation.ean",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "seriesGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "String"
+  }, {
+    "id" : "seriesGetByCharacterId_comicsFilters.issn",
+    "label" : "ISSN",
+    "description" : "Filter by ISSN.",
+    "optional" : false,
+    "feel" : "optional",
+    "group" : "operation",
+    "binding" : {
+      "name" : "seriesGetByCharacterId_comicsFilters.operation.issn",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "seriesGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "String"
+  }, {
+    "id" : "seriesGetByCharacterId_comicsFilters.hasDigitalIssue",
+    "label" : "Has Digital Issue?",
+    "description" : "Include only results which are available digitally.",
+    "optional" : false,
+    "group" : "operation",
+    "binding" : {
+      "name" : "seriesGetByCharacterId_comicsFilters.operation.hasDigitalIssue",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "seriesGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "Boolean"
+  }, {
+    "id" : "seriesGetByCharacterId_modifiedSince.modifiedSince",
+    "label" : "Modified Since",
+    "description" : "Return only records which have been modified since the specified date (YYYY-MM-DD).",
+    "optional" : false,
+    "feel" : "optional",
+    "group" : "operation",
+    "binding" : {
+      "name" : "seriesGetByCharacterId_modifiedSince.operation.modifiedSince",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "seriesGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "String"
+  }, {
+    "id" : "seriesGetByCharacterId_comics.comics",
+    "label" : "Comics",
+    "description" : "Return only records which take place in the specified comics (accepts a comma-separated list of ids).",
+    "optional" : false,
+    "feel" : "optional",
+    "group" : "operation",
+    "binding" : {
+      "name" : "seriesGetByCharacterId_comics.operation.comics",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "seriesGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "String"
+  }, {
+    "id" : "seriesGetByCharacterId_creators.creators",
+    "label" : "Creators",
+    "description" : "Return only records which feature work by the specified creators (accepts a comma-separated list of ids).",
+    "optional" : false,
+    "feel" : "optional",
+    "group" : "operation",
+    "binding" : {
+      "name" : "seriesGetByCharacterId_creators.operation.creators",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "seriesGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "String"
+  }, {
+    "id" : "seriesGetByCharacterId_events.events",
+    "label" : "Events",
+    "description" : "Return only records which take place in the specified events (accepts a comma-separated list of ids).",
+    "optional" : false,
+    "feel" : "optional",
+    "group" : "operation",
+    "binding" : {
+      "name" : "seriesGetByCharacterId_events.operation.events",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "seriesGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "String"
+  }, {
+    "id" : "seriesGetByCharacterId_stories.stories",
+    "label" : "Stories",
+    "description" : "Return only records which contain the specified stories (accepts a comma-separated list of ids).",
+    "optional" : false,
+    "feel" : "optional",
+    "group" : "operation",
+    "binding" : {
+      "name" : "seriesGetByCharacterId_stories.operation.stories",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "seriesGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "String"
+  }, {
+    "id" : "storiesGetByCharacterId_characterId.characterId",
+    "label" : "Character ID",
+    "description" : "A single character ID.",
+    "optional" : false,
+    "constraints" : {
+      "notEmpty" : true
+    },
+    "feel" : "optional",
+    "group" : "operation",
+    "binding" : {
+      "name" : "storiesGetByCharacterId_characterId.operation.characterId",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "storiesGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "String"
+  }, {
+    "id" : "storiesGetByCharacterId_comicsFilters.format",
+    "label" : "Format",
+    "description" : "Filter by the issue format.",
+    "optional" : false,
+    "group" : "operation",
+    "binding" : {
+      "name" : "storiesGetByCharacterId_comicsFilters.operation.format",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "storiesGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "Dropdown",
+    "choices" : [ {
+      "name" : "Digital comic",
+      "value" : "digital comic"
+    }, {
+      "name" : "Infinite comic",
+      "value" : "infinite comic"
+    }, {
+      "name" : "Digest",
+      "value" : "digest"
+    }, {
+      "name" : "Trade paperback",
+      "value" : "trade paperback"
+    }, {
+      "name" : "Magazine",
+      "value" : "magazine"
+    }, {
+      "name" : "Comic",
+      "value" : "comic"
+    }, {
+      "name" : "Hardcover",
+      "value" : "hardcover"
+    }, {
+      "name" : "Graphic novel",
+      "value" : "graphic novel"
+    } ]
+  }, {
+    "id" : "storiesGetByCharacterId_comicsFilters.formatType",
+    "label" : "Format Type",
+    "description" : "Filter by the issue format type.",
+    "optional" : false,
+    "group" : "operation",
+    "binding" : {
+      "name" : "storiesGetByCharacterId_comicsFilters.operation.formatType",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "storiesGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "Dropdown",
+    "choices" : [ {
+      "name" : "Collection",
+      "value" : "collection"
+    }, {
+      "name" : "Comic",
+      "value" : "comic"
+    } ]
+  }, {
+    "id" : "storiesGetByCharacterId_comicsFilters.noVariants",
+    "label" : "Exclude Variants?",
+    "description" : "Exclude variant comics from the result set.",
+    "optional" : false,
+    "group" : "operation",
+    "binding" : {
+      "name" : "storiesGetByCharacterId_comicsFilters.operation.noVariants",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "storiesGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "Boolean"
+  }, {
+    "id" : "storiesGetByCharacterId_comicsFilters.dateDescriptor",
+    "label" : "Predefined Date Range",
+    "description" : "Return comics within a predefined date range.",
+    "optional" : false,
+    "group" : "operation",
+    "binding" : {
+      "name" : "storiesGetByCharacterId_comicsFilters.operation.dateDescriptor",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "storiesGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "Dropdown",
+    "choices" : [ {
+      "name" : "Next week",
+      "value" : "nextWeek"
+    }, {
+      "name" : "Next month",
+      "value" : "nextMonth"
+    }, {
+      "name" : "This week",
+      "value" : "thisWeek"
+    }, {
+      "name" : "Last week",
+      "value" : "lastWeek"
+    } ]
+  }, {
+    "id" : "storiesGetByCharacterId_comicsFilters.dateRange",
+    "label" : "Date Range",
+    "description" : "Return comics within a predefined date range. Dates must be specified as date1,date2 (e.g. 2013-01-01,2013-01-02).",
+    "optional" : false,
+    "feel" : "optional",
+    "group" : "operation",
+    "binding" : {
+      "name" : "storiesGetByCharacterId_comicsFilters.operation.dateRange",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "storiesGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "String"
+  }, {
+    "id" : "storiesGetByCharacterId_comicsFilters.title",
+    "label" : "Title",
+    "description" : "Return only issues in series whose title matches the input.",
+    "optional" : false,
+    "feel" : "optional",
+    "group" : "operation",
+    "binding" : {
+      "name" : "storiesGetByCharacterId_comicsFilters.operation.title",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "storiesGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "String"
+  }, {
+    "id" : "storiesGetByCharacterId_comicsFilters.titleStartsWith",
+    "label" : "Title Starts With",
+    "description" : "Return only issues in series whose title starts with the input.",
+    "optional" : false,
+    "feel" : "optional",
+    "group" : "operation",
+    "binding" : {
+      "name" : "storiesGetByCharacterId_comicsFilters.operation.titleStartsWith",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "storiesGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "String"
+  }, {
+    "id" : "storiesGetByCharacterId_comicsFilters.startYear",
+    "label" : "Start Year",
+    "description" : "Return only issues in series whose start year matches the input.",
+    "optional" : false,
+    "feel" : "optional",
+    "group" : "operation",
+    "binding" : {
+      "name" : "storiesGetByCharacterId_comicsFilters.operation.startYear",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "storiesGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "String"
+  }, {
+    "id" : "storiesGetByCharacterId_comicsFilters.issueNumber",
+    "label" : "Issue Number",
+    "description" : "Return only issues in series whose issue number matches the input.",
+    "optional" : false,
+    "feel" : "optional",
+    "group" : "operation",
+    "binding" : {
+      "name" : "storiesGetByCharacterId_comicsFilters.operation.issueNumber",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "storiesGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "String"
+  }, {
+    "id" : "storiesGetByCharacterId_comicsFilters.diamondCode",
+    "label" : "Diamond Code",
+    "description" : "Filter by diamond code.",
+    "optional" : false,
+    "feel" : "optional",
+    "group" : "operation",
+    "binding" : {
+      "name" : "storiesGetByCharacterId_comicsFilters.operation.diamondCode",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "storiesGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "String"
+  }, {
+    "id" : "storiesGetByCharacterId_comicsFilters.digitalId",
+    "label" : "Digital ID",
+    "description" : "Filter by digital comic id.",
+    "optional" : false,
+    "feel" : "optional",
+    "group" : "operation",
+    "binding" : {
+      "name" : "storiesGetByCharacterId_comicsFilters.operation.digitalId",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "storiesGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "String"
+  }, {
+    "id" : "storiesGetByCharacterId_comicsFilters.upc",
+    "label" : "UPC",
+    "description" : "Filter by UPC.",
+    "optional" : false,
+    "feel" : "optional",
+    "group" : "operation",
+    "binding" : {
+      "name" : "storiesGetByCharacterId_comicsFilters.operation.upc",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "storiesGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "String"
+  }, {
+    "id" : "storiesGetByCharacterId_comicsFilters.isbn",
+    "label" : "ISBN",
+    "description" : "Filter by ISBN.",
+    "optional" : false,
+    "feel" : "optional",
+    "group" : "operation",
+    "binding" : {
+      "name" : "storiesGetByCharacterId_comicsFilters.operation.isbn",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "storiesGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "String"
+  }, {
+    "id" : "storiesGetByCharacterId_comicsFilters.ean",
+    "label" : "EAN",
+    "description" : "Filter by EAN.",
+    "optional" : false,
+    "feel" : "optional",
+    "group" : "operation",
+    "binding" : {
+      "name" : "storiesGetByCharacterId_comicsFilters.operation.ean",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "storiesGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "String"
+  }, {
+    "id" : "storiesGetByCharacterId_comicsFilters.issn",
+    "label" : "ISSN",
+    "description" : "Filter by ISSN.",
+    "optional" : false,
+    "feel" : "optional",
+    "group" : "operation",
+    "binding" : {
+      "name" : "storiesGetByCharacterId_comicsFilters.operation.issn",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "storiesGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "String"
+  }, {
+    "id" : "storiesGetByCharacterId_comicsFilters.hasDigitalIssue",
+    "label" : "Has Digital Issue?",
+    "description" : "Include only results which are available digitally.",
+    "optional" : false,
+    "group" : "operation",
+    "binding" : {
+      "name" : "storiesGetByCharacterId_comicsFilters.operation.hasDigitalIssue",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "storiesGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "Boolean"
+  }, {
+    "id" : "storiesGetByCharacterId_modifiedSince.modifiedSince",
+    "label" : "Modified Since",
+    "description" : "Return only records which have been modified since the specified date (YYYY-MM-DD).",
+    "optional" : false,
+    "feel" : "optional",
+    "group" : "operation",
+    "binding" : {
+      "name" : "storiesGetByCharacterId_modifiedSince.operation.modifiedSince",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "storiesGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "String"
+  }, {
+    "id" : "storiesGetByCharacterId_characters.characters",
+    "label" : "Characters",
+    "description" : "Return only records which feature the specified characters (accepts a comma-separated list of ids).",
+    "optional" : false,
+    "feel" : "optional",
+    "group" : "operation",
+    "binding" : {
+      "name" : "storiesGetByCharacterId_characters.operation.characters",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "storiesGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "String"
+  }, {
+    "id" : "storiesGetByCharacterId_comics.comics",
+    "label" : "Comics",
+    "description" : "Return only records which take place in the specified comics (accepts a comma-separated list of ids).",
+    "optional" : false,
+    "feel" : "optional",
+    "group" : "operation",
+    "binding" : {
+      "name" : "storiesGetByCharacterId_comics.operation.comics",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "storiesGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "String"
+  }, {
+    "id" : "storiesGetByCharacterId_creators.creators",
+    "label" : "Creators",
+    "description" : "Return only records which feature work by the specified creators (accepts a comma-separated list of ids).",
+    "optional" : false,
+    "feel" : "optional",
+    "group" : "operation",
+    "binding" : {
+      "name" : "storiesGetByCharacterId_creators.operation.creators",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "storiesGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "String"
+  }, {
+    "id" : "storiesGetByCharacterId_events.events",
+    "label" : "Events",
+    "description" : "Return only records which take place in the specified events (accepts a comma-separated list of ids).",
+    "optional" : false,
+    "feel" : "optional",
+    "group" : "operation",
+    "binding" : {
+      "name" : "storiesGetByCharacterId_events.operation.events",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "storiesGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "String"
+  }, {
+    "id" : "Comics Operation",
+    "label" : "Comics query",
+    "group" : "operation",
+    "binding" : {
+      "name" : "Comics Operation",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "property" : "query.type",
+      "equals" : "comicsQuery",
+      "type" : "simple"
+    },
+    "type" : "Dropdown",
+    "choices" : [ {
+      "name" : "Get all Comics",
+      "value" : "comicsGetAll"
+    } ]
+  }, {
+    "id" : "charactersGetAll_pagination.paginationLimit",
+    "label" : "Limit",
+    "description" : "Limit the result set to the specified number of resources.",
+    "optional" : false,
+    "value" : "10",
+    "feel" : "optional",
+    "group" : "pagination",
+    "binding" : {
+      "name" : "charactersGetAll_pagination.pagination.limit",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "charactersGetAll",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "String"
+  }, {
+    "id" : "charactersGetAll_pagination.paginationOffset",
+    "label" : "Offset",
+    "description" : "Skip the specified number of resources in the result set.",
+    "optional" : false,
+    "value" : "0",
+    "feel" : "optional",
+    "group" : "pagination",
+    "binding" : {
+      "name" : "charactersGetAll_pagination.pagination.offset",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "charactersGetAll",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "String"
+  }, {
+    "id" : "comicsGetByCharacterId_pagination.paginationLimit",
+    "label" : "Limit",
+    "description" : "Limit the result set to the specified number of resources.",
+    "optional" : false,
+    "value" : "10",
+    "feel" : "optional",
+    "group" : "pagination",
+    "binding" : {
+      "name" : "comicsGetByCharacterId_pagination.pagination.limit",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "comicsGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "String"
+  }, {
+    "id" : "comicsGetByCharacterId_pagination.paginationOffset",
+    "label" : "Offset",
+    "description" : "Skip the specified number of resources in the result set.",
+    "optional" : false,
+    "value" : "0",
+    "feel" : "optional",
+    "group" : "pagination",
+    "binding" : {
+      "name" : "comicsGetByCharacterId_pagination.pagination.offset",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "comicsGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "String"
+  }, {
+    "id" : "eventsGetByCharacterId_pagination.paginationLimit",
+    "label" : "Limit",
+    "description" : "Limit the result set to the specified number of resources.",
+    "optional" : false,
+    "value" : "10",
+    "feel" : "optional",
+    "group" : "pagination",
+    "binding" : {
+      "name" : "eventsGetByCharacterId_pagination.pagination.limit",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "eventsGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "String"
+  }, {
+    "id" : "eventsGetByCharacterId_pagination.paginationOffset",
+    "label" : "Offset",
+    "description" : "Skip the specified number of resources in the result set.",
+    "optional" : false,
+    "value" : "0",
+    "feel" : "optional",
+    "group" : "pagination",
+    "binding" : {
+      "name" : "eventsGetByCharacterId_pagination.pagination.offset",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "eventsGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "String"
+  }, {
+    "id" : "seriesGetByCharacterId_pagination.paginationLimit",
+    "label" : "Limit",
+    "description" : "Limit the result set to the specified number of resources.",
+    "optional" : false,
+    "value" : "10",
+    "feel" : "optional",
+    "group" : "pagination",
+    "binding" : {
+      "name" : "seriesGetByCharacterId_pagination.pagination.limit",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "seriesGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "String"
+  }, {
+    "id" : "seriesGetByCharacterId_pagination.paginationOffset",
+    "label" : "Offset",
+    "description" : "Skip the specified number of resources in the result set.",
+    "optional" : false,
+    "value" : "0",
+    "feel" : "optional",
+    "group" : "pagination",
+    "binding" : {
+      "name" : "seriesGetByCharacterId_pagination.pagination.offset",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "seriesGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "String"
+  }, {
+    "id" : "storiesGetByCharacterId_pagination.paginationLimit",
+    "label" : "Limit",
+    "description" : "Limit the result set to the specified number of resources.",
+    "optional" : false,
+    "value" : "10",
+    "feel" : "optional",
+    "group" : "pagination",
+    "binding" : {
+      "name" : "storiesGetByCharacterId_pagination.pagination.limit",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "storiesGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "String"
+  }, {
+    "id" : "storiesGetByCharacterId_pagination.paginationOffset",
+    "label" : "Offset",
+    "description" : "Skip the specified number of resources in the result set.",
+    "optional" : false,
+    "value" : "0",
+    "feel" : "optional",
+    "group" : "pagination",
+    "binding" : {
+      "name" : "storiesGetByCharacterId_pagination.pagination.offset",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Character Operation",
+        "equals" : "storiesGetByCharacterId",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "charactersQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "String"
+  }, {
+    "id" : "comicsGetAll_pagination.paginationLimit",
+    "label" : "Limit",
+    "description" : "Limit the result set to the specified number of resources.",
+    "optional" : false,
+    "value" : "10",
+    "feel" : "optional",
+    "group" : "pagination",
+    "binding" : {
+      "name" : "comicsGetAll_pagination.pagination.limit",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Comics Operation",
+        "equals" : "comicsGetAll",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "comicsQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "String"
+  }, {
+    "id" : "comicsGetAll_pagination.paginationOffset",
+    "label" : "Offset",
+    "description" : "Skip the specified number of resources in the result set.",
+    "optional" : false,
+    "value" : "0",
+    "feel" : "optional",
+    "group" : "pagination",
+    "binding" : {
+      "name" : "comicsGetAll_pagination.pagination.offset",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "allMatch" : [ {
+        "property" : "Comics Operation",
+        "equals" : "comicsGetAll",
+        "type" : "simple"
+      }, {
+        "property" : "query.type",
+        "equals" : "comicsQuery",
+        "type" : "simple"
+      } ]
+    },
+    "type" : "String"
+  }, {
+    "id" : "resultVariable",
+    "label" : "Result variable",
+    "description" : "Name of variable to store the response in",
+    "group" : "output",
+    "binding" : {
+      "key" : "resultVariable",
+      "type" : "zeebe:taskHeader"
+    },
+    "type" : "String"
+  }, {
+    "id" : "resultExpression",
+    "label" : "Result expression",
+    "description" : "Expression to map the response into process variables",
+    "feel" : "required",
+    "group" : "output",
+    "binding" : {
+      "key" : "resultExpression",
+      "type" : "zeebe:taskHeader"
+    },
+    "type" : "Text"
+  }, {
+    "id" : "errorExpression",
+    "label" : "Error expression",
+    "description" : "Expression to handle errors. Details in the <a href=\"https://docs.camunda.io/docs/components/connectors/use-connectors/\" target=\"_blank\">documentation</a>.",
+    "feel" : "required",
+    "group" : "error",
+    "binding" : {
+      "key" : "errorExpression",
+      "type" : "zeebe:taskHeader"
+    },
+    "type" : "Text"
+  }, {
+    "id" : "retryCount",
+    "label" : "Retries",
+    "description" : "Number of retries",
+    "value" : "3",
+    "feel" : "optional",
+    "group" : "retries",
+    "binding" : {
+      "property" : "retries",
+      "type" : "zeebe:taskDefinition"
+    },
+    "type" : "String"
+  }, {
+    "id" : "retryBackoff",
+    "label" : "Retry backoff",
+    "description" : "ISO-8601 duration to wait between retries",
+    "value" : "PT0S",
+    "feel" : "optional",
+    "group" : "retries",
+    "binding" : {
+      "key" : "retryBackoff",
+      "type" : "zeebe:taskHeader"
+    },
+    "type" : "String"
+  } ],
+  "icon" : {
+    "contents" : "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iNTBweCIgaGVpZ2h0PSIyMHB4IiB2aWV3Qm94PSIwIDAgNDkgMjAiIHZlcnNpb249IjEuMSI+CjxnIGlkPSJzdXJmYWNlMSI+CjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSI0OSIgaGVpZ2h0PSIyMCIgc3R5bGU9ImZpbGw6cmdiKDkyLjk0MTE3NiUsMTEuMzcyNTQ5JSwxNC4xMTc2NDclKTtmaWxsLW9wYWNpdHk6MTtzdHJva2U6bm9uZTsiLz4KPHBhdGggc3R5bGU9IiBzdHJva2U6bm9uZTtmaWxsLXJ1bGU6bm9uemVybztmaWxsOnJnYigxMDAlLDEwMCUsMTAwJSk7ZmlsbC1vcGFjaXR5OjE7IiBkPSJNIDQxLjQ2NDg0NCA0LjY2Nzk2OSBMIDQxLjQ2NDg0NCAxLjYwMTU2MiBMIDMzLjA2NjQwNiAxLjYwMTU2MiBMIDMxLjY4MzU5NCAxMS44Mzk4NDQgTCAzMC4zMjAzMTIgMS42MDE1NjIgTCAyNy4yODkwNjIgMS42MDE1NjIgTCAyNy42Mjg5MDYgNC4zMzIwMzEgQyAyNy4yNzczNDQgMy42MzI4MTIgMjYuMDM5MDYyIDEuNjAxNTYyIDIzLjMwODU5NCAxLjYwMTU2MiBDIDIzLjI5Mjk2OSAxLjYwMTU2MiAyMC4yNzczNDQgMS42MDE1NjIgMjAuMjc3MzQ0IDEuNjAxNTYyIEwgMjAuMjY1NjI1IDE2LjUyNzM0NCBMIDE4LjA1ODU5NCAxLjYwMTU2MiBMIDE0LjA4OTg0NCAxLjU5NzY1NiBMIDExLjgwNDY4OCAxNy4wNjI1IEwgMTEuODA4NTk0IDEuNjAxNTYyIEwgOC4wMTE3MTkgMS42MDE1NjIgTCA2LjY0MDYyNSAxMC4yODkwNjIgTCA1LjMwODU5NCAxLjYwMTU2MiBMIDEuNTExNzE5IDEuNjAxNTYyIEwgMS41MTE3MTkgMTguNDE0MDYyIEwgNC41IDE4LjQxNDA2MiBMIDQuNSAxMC4zMDg1OTQgTCA1Ljg2MzI4MSAxOC40MTQwNjIgTCA3LjQ1MzEyNSAxOC40MTQwNjIgTCA4Ljc5Mjk2OSAxMC4zMDg1OTQgTCA4Ljc5Mjk2OSAxOC40MTQwNjIgTCAxNC41NTg1OTQgMTguNDE0MDYyIEwgMTQuOTEwMTU2IDE1LjgyNDIxOSBMIDE3LjIzMDQ2OSAxNS44MjQyMTkgTCAxNy41NzgxMjUgMTguNDE0MDYyIEwgMjMuMjM4MjgxIDE4LjQxNzk2OSBMIDIzLjI0MjE4OCAxOC40MTc5NjkgTCAyMy4yNDIxODggMTguNDE0MDYyIEwgMjMuMjUgMTguNDE0MDYyIEwgMjMuMjUgMTIuOTU3MDMxIEwgMjMuOTQ1MzEyIDEyLjg1MTU2MiBMIDI1LjM4MjgxMiAxOC40MTc5NjkgTCAyOC4zMDg1OTQgMTguNDE3OTY5IEwgMjguMzA4NTk0IDE4LjQxNDA2MiBMIDI4LjMxNjQwNiAxOC40MTQwNjIgTCAyNi40MzM1OTQgMTEuODkwNjI1IEMgMjcuMzg2NzE5IDExLjE3NTc4MSAyOC40NjQ4NDQgOS4zNTE1NjIgMjguMTc5Njg4IDcuNjA5Mzc1IEMgMjguMTgzNTk0IDcuNjMyODEyIDI5Ljk1NzAzMSAxOC40MjE4NzUgMjkuOTU3MDMxIDE4LjQyMTg3NSBMIDMzLjQ0MTQwNiAxOC40MTQwNjIgTCAzNS44MjAzMTIgMy4xNzU3ODEgTCAzNS44MjAzMTIgMTguNDE0MDYyIEwgNDEuNDY0ODQ0IDE4LjQxNDA2MiBMIDQxLjQ2NDg0NCAxNS4zOTA2MjUgTCAzOC43ODUxNTYgMTUuMzkwNjI1IEwgMzguNzg1MTU2IDExLjUzNTE1NiBMIDQxLjQ2NDg0NCAxMS41MzUxNTYgTCA0MS40NjQ4NDQgOC40NjQ4NDQgTCAzOC43ODUxNTYgOC40NjQ4NDQgTCAzOC43ODUxNTYgNC42Njc5NjkgWiBNIDE1LjI2MTcxOSAxMy4xNjAxNTYgTCAxNi4wODIwMzEgNS45NzI2NTYgTCAxNi45MzM1OTQgMTMuMTYwMTU2IFogTSAyMy45NTMxMjUgOS44Mzk4NDQgQyAyMy43MjY1NjIgOS45NTMxMjUgMjMuNDg0Mzc1IDEwLjAxMTcxOSAyMy4yNSAxMC4wMTE3MTkgTCAyMy4yNSA0LjYwNTQ2OSBDIDIzLjI1MzkwNiA0LjYwNTQ2OSAyMy4yNjE3MTkgNC42MDE1NjIgMjMuMjY1NjI1IDQuNjAxNTYyIEMgMjMuNSA0LjYwMTU2MiAyNS4yNDYwOTQgNC42NzU3ODEgMjUuMjQ2MDk0IDcuMjc3MzQ0IEMgMjUuMjQ2MDk0IDguNjQwNjI1IDI0LjY1MjM0NCA5LjQ5NjA5NCAyMy45NTMxMjUgOS44Mzk4NDQgTSA0Ny40OTIxODggMTUuMzg2NzE5IEwgNDcuNDkyMTg4IDE4LjQxMDE1NiBMIDQxLjk4NDM3NSAxOC40MTAxNTYgTCA0MS45ODQzNzUgMS41OTc2NTYgTCA0NC45NDkyMTkgMS41OTc2NTYgTCA0NC45NDkyMTkgMTUuMzg2NzE5IFogTSA0Ny40OTIxODggMTUuMzg2NzE5ICIvPgo8L2c+Cjwvc3ZnPgo="
+  }
+}
